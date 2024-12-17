@@ -1,86 +1,85 @@
-let form = document.getElementById('todoform')
+// Sélection des éléments DOM
+let form = document.getElementById('todoform');
 let todolist = document.getElementById('listtodo');
-let arrays = [];
-console.log(form)
-form.addEventListener('submit', function (ev){
-    ev.preventDefault()
-    //Methodes pour récuperer les elements du formulaire
-    const inputs = document.forms['todof'].getElementsByTagName("input")
-    const inputs1 = form.elements
-    
 
-    const title = inputs1.title.value
-    const action = inputs1.action.value
-    const date = inputs1.date.value
-    const description = inputs1.description.value
-    
-    const obj = {
-        "title":title,
-        "date": date,
-        "desc":description
-    }
-    arrays = JSON.parse(localStorage.getItem("todos")) 
-    console.log("action", action)
-    if (action == "") {
-        arrays.push(obj)
-        // let getel = localStorage.getItem()
-        localStorage.setItem("todos", JSON.stringify(arrays))
-    } else if (action == "edit") {
-        
-    } {
-        arrays.forEach(element => {
-            // console.log(obj.title)
-            if (element.title ==  obj.title) {
-                
-                element.title = obj.title
-                element.date = obj.date
-                element.desc = obj.desc
-            }
-        });
-        localStorage.setItem("todos", JSON.stringify(arrays))
-    }
-    
-    // arrays.forEach((el)=>{
-        // todolist.innerHTML += "<p> Titre: "+obj.title+"<p>";
-    // })
-    
-    console.log(arrays)
-    window.location.reload()
-})
+// Centralisation de la gestion du localStorage
+function getTodos() {
+    return JSON.parse(localStorage.getItem("todos")) || [];
+}
 
-const getar = JSON.parse(localStorage.getItem("todos")) 
-let html =""
-if (getar != null) {
-    getar.forEach(element => {
-        html += `
+function saveTodos(todos) {
+    localStorage.setItem("todos", JSON.stringify(todos));
+}
+
+// Initialisation des variables
+let todos = getTodos();
+let isEditing = false;
+let currentEditId = null;
+
+// Affichage des tâches
+function renderTodos() {
+    todolist.innerHTML = ""; // Vide la liste
+    todos.forEach(todo => {
+        todolist.innerHTML += `
             <tr>
-                <td>Titre: ${element.title}</td>
-                <td>Date: ${element.date}</td>
-                <td>Description: ${element.desc}</td>
+                <td>Titre: ${todo.title}</td>
+                <td>Date: ${todo.date}</td>
+                <td>Description: ${todo.desc}</td>
                 <td>
-                    <button class="bt" onclick="edit('${element.title}')">+</button>
-                    <button class="bt" onclick="erase('${element.title}')">-</button>
+                    <button onclick="edit('${todo.id}')">✏️</button>
+                    <button onclick="erase('${todo.id}')">🗑️</button>
                 </td>
             </tr>
         `;
     });
-    
-    todolist.innerHTML = html;
 }
 
+// Ajout ou édition de tâche
+form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    const inputs = form.elements;
+
+    const newTodo = {
+        id: currentEditId || Date.now(), // Utilise un identifiant unique
+        title: inputs.title.value.trim(),
+        date: inputs.date.value,
+        desc: inputs.description.value.trim(),
+    };
+    console.log("edit", isEditing)
+    if (!isEditing) {
+        // Mode ajout
+        todos.push(newTodo);
+    } else {
+        // Mode édition
+        todos = todos.map(todo => (todo.id === currentEditId ? newTodo : todo));
+        isEditing = false;
+        currentEditId = null;
+    }
+
+    saveTodos(todos);
+    renderTodos();
+    form.reset(); // Réinitialise le formulaire
+});
+
+// Fonction pour éditer une tâche
 function edit(id) {
-    const filt = getar.filter((item) => item.title == id)[0]
-    const inputs = form.elements
-    inputs.action.value = 'edit'
-    inputs.title.value = filt.title
-    inputs.date.value = filt.date
-    inputs.description.value = filt.desc
-    console.log(filt)
+    const todo = todos.find(t => t.id == id);
+    if (todo) {
+        form.elements.title.value = todo.title;
+        form.elements.date.value = todo.date;
+        form.elements.description.value = todo.desc;
+
+        isEditing = true;
+        currentEditId = id;
+    }
 }
 
+// Fonction pour supprimer une tâche
 function erase(id) {
-    let array = JSON.parse(localStorage.getItem("todos")) 
-    array = array.filter(element => element.title != id);
-    localStorage.setItem("todos", JSON.stringify(array))
-    window.location.reload()
+    todos = todos.filter(todo => todo.id != id);
+    saveTodos(todos);
+    renderTodos();
 }
+
+// Appel initial
+renderTodos();
