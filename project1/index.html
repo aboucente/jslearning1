@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <div class="main">
+            <div class="header">
+                <h1 class="title">TO-DO List</h1>
+            </div>
+            <div class="center">
+                <form name="todof" id="todoform" method="post">
+                    <div>
+                        <input class="input" type="hidden" name="action" id="">
+                    </div>
+                    <div>
+                        <input class="input" type="text" name="title" id="">
+                    </div>
+                    
+                    <div>
+                        <input class="input"  type="date" name="date" id="">
+                    </div>
+                    <textarea name="description" id="" cols="30" rows="10"></textarea>
+                    <div>
+                        <button type="submit">Valider</button>
+                    </div>
+                </form>
+                <div style="margin-top: 10px;">
+                    <h2>My Todos</h2>
+                    <table >
+                        <thead>
+                            <tr>
+                                <td>Titre</td>
+                                <td>Date</td>
+                                <td>description</td>
+                                <td>Actions</td>
+                            </tr>
+                        </thead>
+                        <tbody id="listtodo">
+                        </tbody>
+                    </table>
+                    
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</body>
+</html>
+<script src="index.js"></script>
