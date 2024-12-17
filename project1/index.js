@@ -51,7 +51,7 @@ form.addEventListener('submit', function (ev) {
         todos.push(newTodo);
     } else {
         // Mode édition
-        todos = todos.map(todo => (todo.id === currentEditId ? newTodo : todo));
+        todos = todos.map(todo => (todo.id == currentEditId ? newTodo : todo));
         isEditing = false;
         currentEditId = null;
     }
